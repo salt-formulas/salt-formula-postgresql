@@ -1,0 +1,15 @@
+{%- set version = pillar.postgresql.server.get('version', '9.3') %}
+{%- set server = salt['grains.filter_by']({
+    'Debian': {
+        'pkgs': ['postgresql-'+version, 'postgresql-contrib-'+version, 'postgresql-doc-'+version, 'postgresql-server-dev-'+version],
+        'service': 'postgres',
+        'version': version,
+        'gis': False,
+    },
+    'RedHat': {
+        'pkgs': ['postgresql'+version|replace('.', '')+'-server'],
+        'service': 'postgres',
+        'version': version,
+        'gis': False,
+    },
+}, merge=salt['pillar.get']('postgresql:server')) %}

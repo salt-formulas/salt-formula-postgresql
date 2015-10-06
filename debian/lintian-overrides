@@ -1,0 +1,1 @@
+salt-formula-postgresql binary: shell-script-fails-syntax-check usr/share/salt-formulas/env/postgresql/files/restore.sh

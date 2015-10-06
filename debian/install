@@ -1,0 +1,2 @@
+postgresql/*             /usr/share/salt-formulas/env/postgresql/
+metadata/service/*      /usr/share/salt-formulas/reclass/service/postgresql/

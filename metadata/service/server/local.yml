@@ -1,0 +1,12 @@
+applications:
+- postgresql
+parameters:
+  postgresql:
+    server:
+      enabled: true
+      bind:
+        address: '127.0.0.1'
+        port: 5432
+        protocol: tcp
+      clients:
+      - '127.0.0.1'
