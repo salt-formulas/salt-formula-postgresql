@@ -1,5 +1,5 @@
 parameters:
-  rabbitmq:
+  postgresql:
     _support:
       backupninja:
         enabled: true
