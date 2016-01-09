@@ -1,0 +1,10 @@
+{%- from "postgresql/map.jinja" import server with context %}
+doc:
+  name: postgresql
+  description: PostgreSQL is an object-relational database management system.
+  role:
+    server:
+      name: server
+      param:
+        bind:
+          value: {{ server.bind.address }}:{{ server.bind.port }}

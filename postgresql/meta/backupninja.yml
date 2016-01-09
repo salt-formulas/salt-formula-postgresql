@@ -1,0 +1,5 @@
+backup:
+  postgresql:
+    filesystem_include:
+    - /var/backups/postgresql
+    filesystem_exclude: {}
