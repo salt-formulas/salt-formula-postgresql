@@ -8,12 +8,12 @@ postgresql_packages:
 init_postgresql_cluster:
   cmd.run:
   - name: pg_createcluster {{ server.version }} main --start
-  - unless: "[ -f /etc/postgresql/{{ server.version }}/main/postgresql.conf ]"
+  - unless: "[ -f {{ server.dir.config }}/postgresql.conf ]"
   - cwd: /root
   - require:
     - pkg: postgresql_packages
 
-/etc/postgresql/{{ server.version }}/main/pg_hba.conf:
+{{ server.dir.config }}/pg_hba.conf:
   file.managed:
   - source: salt://postgresql/files/pg_hba.conf
   - template: jinja
@@ -23,9 +23,9 @@ init_postgresql_cluster:
   - require:
     - pkg: postgresql_packages
 
-/etc/postgresql/{{ server.version }}/main/postgresql.conf:
+{{ server.dir.config }}/postgresql.conf:
   file.managed:
-  - source: salt://postgresql/files/{{ server.version }}/postgresql.conf
+  - source: salt://postgresql/files/{{ server.version }}/postgresql.conf.{{ grains.os_family }}
   - template: jinja
   - user: postgres
   - group: postgres
@@ -49,8 +49,8 @@ postgresql_service:
   service.running:
   - name: postgresql
   - watch:
-    - file: /etc/postgresql/{{ server.version }}/main/pg_hba.conf
-    - file: /etc/postgresql/{{ server.version }}/main/postgresql.conf
+    - file: {{ server.dir.config }}/pg_hba.conf
+    - file: {{ server.dir.config }}/postgresql.conf
   - require:
     - file: /root/.pgpass
 

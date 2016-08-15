@@ -4,12 +4,20 @@
         'pkgs': ['postgresql-'+version, 'postgresql-contrib-'+version, 'postgresql-doc-'+version, 'postgresql-server-dev-'+version],
         'service': 'postgres',
         'version': version,
+        'init_command': 'pg_createcluster '+version+' main --start',
+        'dir': {
+          'config': '/etc/postgresql/'+version+'/main'
+        },
         'gis': False,
     },
     'RedHat': {
-        'pkgs': ['postgresql'+version|replace('.', '')+'-server'],
+        'pkgs': ['postgresql-server', 'postgresql-contrib'],
         'service': 'postgres',
         'version': version,
+        'init_command': 'service postgresql initdb',
+        'dir': {
+          'config': '/var/lib/pgsql/data'
+        },
         'gis': False,
     },
 }, merge=salt['pillar.get']('postgresql:server')) %}
