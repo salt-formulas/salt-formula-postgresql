@@ -7,7 +7,7 @@ postgresql_packages:
 
 init_postgresql_cluster:
   cmd.run:
-  - name: pg_createcluster {{ server.version }} main --start
+  - name: {{ server.init_command }}
   - unless: "[ -f {{ server.dir.config }}/postgresql.conf ]"
   - cwd: /root
   - require:
@@ -21,7 +21,7 @@ init_postgresql_cluster:
   - group: postgres
   - mode: 600
   - require:
-    - pkg: postgresql_packages
+    - cmd: init_postgresql_cluster
 
 {{ server.dir.config }}/postgresql.conf:
   file.managed:
@@ -33,7 +33,7 @@ init_postgresql_cluster:
     postgresql_version: {{ server.version }}
   - mode: 600
   - require:
-    - pkg: postgresql_packages
+    - cmd: init_postgresql_cluster
 
 /root/.pgpass:
   file.managed:
@@ -43,11 +43,12 @@ init_postgresql_cluster:
   - group: root
   - mode: 600
   - require:
-    - pkg: postgresql_packages
+    - cmd: init_postgresql_cluster
 
 postgresql_service:
   service.running:
-  - name: postgresql
+  - name: {{ server.service }}
+  - enable: true
   - watch:
     - file: {{ server.dir.config }}/pg_hba.conf
     - file: {{ server.dir.config }}/postgresql.conf
