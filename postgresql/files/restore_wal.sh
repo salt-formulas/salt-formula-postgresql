@@ -40,7 +40,7 @@ else
     chown postgres:postgres -R $POSTGRESQL_DATA_DIR
     chmod 0700 -R $POSTGRESQL_DATA_DIR 
 
-    echo "Changing permission to data"
+    echo "Changing permission to wals folder"
     chown postgres:postgres -R $POSTGRESQL_DIR/pgbackup/wals/
     chmod 0700 -R $POSTGRESQL_DIR/pgbackup/wals/
 
