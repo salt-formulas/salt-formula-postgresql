@@ -40,6 +40,10 @@ else
     chown postgres:postgres -R $POSTGRESQL_DATA_DIR
     chmod 0700 -R $POSTGRESQL_DATA_DIR 
 
+    echo "Changing permission to data"
+    chown postgres:postgres -R $POSTGRESQL_DIR/pgbackup/wals/
+    chmod 0700 -R $POSTGRESQL_DIR/pgbackup/wals/
+
     echo "Creating recovery.conf"
     echo "restore_command = 'cp $POSTGRESQL_DIR/pgbackup/wals/%f %p'" > $POSTGRESQL_DATA_DIR/recovery.conf
 
