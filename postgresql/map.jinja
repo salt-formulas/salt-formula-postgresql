@@ -11,7 +11,7 @@
         'gis': False,
     },
     'RedHat': {
-        'pkgs': ['postgresql-server', 'postgresql-contrib'],
+        'pkgs': ['postgresql{{ pillar.postgresql.server.get('version', '9.3')|replace(".","") }}-server', 'postgresql{{ pillar.postgresql.server.get('version', '9.3')|replace(".","") }}-contrib'],
         'service': 'postgresql',
         'version': version,
         'init_command': 'service postgresql initdb',
