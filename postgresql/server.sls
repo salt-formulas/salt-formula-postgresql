@@ -176,6 +176,7 @@ database_{{ database_name }}_{{ extension_name }}_extension:
   - template: template0
   - require:
     - postgres_database: postgresql_database_{{ database_name }}
+
 {%- endfor %}
 
 {% if database.initial_data is defined %}
@@ -204,5 +205,28 @@ restore_postgresql_database_{{ database_name }}:
 {% endif %}
 
 {%- endfor %}
+
+{% if server.initial_data is defined %}
+
+{%- set engine = server.initial_data.get("engine", "barman") %}
+
+/root/postgresql/scripts/restore_wal.sh:
+  file.managed:
+  - source: salt://postgresql/files/restore_wal.sh
+  - mode: 770
+  - template: jinja
+  - require: 
+    - file: postgresql_dirs
+
+restore_postgresql_server:
+  cmd.run:
+  - name: /root/postgresql/scripts/restore_wal.sh
+  - unless: "[ -f /root/postgresql/flags/restore_wal-done ]"
+  - cwd: /root
+  - require:
+    - file: /root/postgresql/scripts/restore_wal.sh
+
+{% endif %}
+
 
 {%- endif %}
