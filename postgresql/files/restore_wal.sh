@@ -34,7 +34,7 @@ else
     mv $POSTGRESQL_DIR/pgbackup/backup/$BASE_DATA_PATH/* $POSTGRESQL_DATA_DIR
 
     echo "Moving extracted wals data"
-    mv $POSTGRESQL_DIR/pgbackup/backup/wals_orig/$WALS_DATA_PATH/* $POSTGRESQL_DIR/pgbackup/wals/
+    mv $POSTGRESQL_DIR/pgbackup/wals_orig/$WALS_DATA_PATH/* $POSTGRESQL_DIR/pgbackup/wals/
 
     echo "Changing permission to data folder"
     chown postgres:postgres -R $POSTGRESQL_DATA_DIR
