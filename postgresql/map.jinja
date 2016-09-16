@@ -11,7 +11,7 @@
         'gis': False,
     },
     'RedHat': {
-        'pkgs': ['postgresq'+version|replace(".", "")+'-server', 'postgresql'+version|replace(".", "")+'-contrib'],
+        'pkgs': ['postgresql'+version|replace(".", "")+'-server', 'postgresql'+version|replace(".", "")+'-contrib'],
         'service': 'postgresql-'+version,
         'version': version,
         'init_command': 'service postgresql initdb',
