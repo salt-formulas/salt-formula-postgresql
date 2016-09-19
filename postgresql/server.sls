@@ -18,8 +18,6 @@ init_postgresql_cluster:
     - file: {{ server.dir.config }}/pg_hba.conf
     - file: {{ server.dir.config }}/postgresql.conf
 
-{%- endif %}
-
 {{ server.dir.config }}/pg_hba.conf:
   file.managed:
   - source: salt://postgresql/files/pg_hba.conf
@@ -38,6 +36,8 @@ init_postgresql_cluster:
     postgresql_version: {{ server.version }}
   - mode: 600
 
+{%- endif %}
+
 /root/.pgpass:
   file.managed:
   - source: salt://postgresql/files/pgpass
@@ -45,6 +45,8 @@ init_postgresql_cluster:
   - user: root
   - group: root
   - mode: 600
+
+{%- if grains.os_family == "Debian" %}
 
 postgresql_service:
   service.running:
@@ -69,8 +71,6 @@ postgresql_dirs:
   - makedirs: true
   - require:
     - pkg: postgresql_packages
-
-{%- if grains.os_family == "Debian" %}
 
 {%- for database_name, database in server.get('database', {}).iteritems() %}
 
