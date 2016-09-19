@@ -12,10 +12,10 @@
         'gis': False,
     },
     'RedHat': {
-        'pkgs': ['postgresql'+version_numbers+'-server', 'postgresql'+version_numbers+'-contrib'],
+        'pkgs': ['postgresql93-server', 'postgresql93-contrib'],
         'service': 'postgresql-'+version,
         'version': version,
-        'init_command': 'service postgresql initdb',
+        'init_command': 'service postgresql-9.3 initdb',
         'dir': {
           'config': '/var/lib/pgsql/data'
         },

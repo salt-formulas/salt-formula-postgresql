@@ -5,6 +5,8 @@ postgresql_packages:
   pkg.installed:
   - names: {{ server.pkgs }}
 
+{%- if grains.os_family == "Debian" %}
+
 init_postgresql_cluster:
   cmd.run:
   - name: {{ server.init_command }}
@@ -12,6 +14,11 @@ init_postgresql_cluster:
   - cwd: /root
   - require:
     - pkg: postgresql_packages
+  - require_in:
+    - file: {{ server.dir.config }}/pg_hba.conf
+    - file: {{ server.dir.config }}/postgresql.conf
+
+{%- endif %}
 
 {{ server.dir.config }}/pg_hba.conf:
   file.managed:
@@ -20,8 +27,6 @@ init_postgresql_cluster:
   - user: postgres
   - group: postgres
   - mode: 600
-  - require:
-    - cmd: init_postgresql_cluster
 
 {{ server.dir.config }}/postgresql.conf:
   file.managed:
@@ -32,8 +37,6 @@ init_postgresql_cluster:
   - defaults:
     postgresql_version: {{ server.version }}
   - mode: 600
-  - require:
-    - cmd: init_postgresql_cluster
 
 /root/.pgpass:
   file.managed:
@@ -42,8 +45,6 @@ init_postgresql_cluster:
   - user: root
   - group: root
   - mode: 600
-  - require:
-    - cmd: init_postgresql_cluster
 
 postgresql_service:
   service.running:
@@ -69,62 +70,7 @@ postgresql_dirs:
   - require:
     - pkg: postgresql_packages
 
-
-{%- for database in server.get('databases', []) %}
-
-{%- for user in database.users %}
-
-postgresql_user_{{ database.name }}_{{ user.name }}:
-  postgres_user.present:
-  - name: {{ user.name }}
-  - user: postgres
-  {% if user.get('createdb', False) %}
-  - createdb: enabled
-  {% endif %}
-  - password: {{ user.password }}
-  - require:
-    - service: postgresql_service
-
-{%- endfor %}
-
-postgresql_database_{{ database.name }}:
-  postgres_database.present:
-  - name: {{ database.name }}
-  - encoding: {{ database.encoding }}
-  - user: postgres
-  - template: template0
-  - owner: {% for user in database.users %}{% if loop.first %}{{ user.name }}{% endif %}{% endfor %}
-  - require:
-    {%- for user in database.users %}
-    - postgres_user: postgresql_user_{{ database.name }}_{{ user.name }}
-    {%- endfor %}
-
-{% if database.initial_data is defined %}
-
-{%- set engine = database.initial_data.get("engine", "backupninja") %}
-
-/root/postgresql/scripts/restore_{{ database.name }}.sh:
-  file.managed:
-  - source: salt://postgresql/files/restore.sh
-  - mode: 770
-  - template: jinja
-  - defaults:
-    database_name: {{ database.name }}
-  - require: 
-    - file: postgresql_dirs
-    - postgres_database: postgresql_database_{{ database.name }}
-
-restore_postgresql_database_{{ database.name }}:
-  cmd.run:
-  - name: /root/postgresql/scripts/restore_{{ database.name }}.sh
-  - unless: "[ -f /root/postgresql/flags/{{ database.name }}-installed ]"
-  - cwd: /root
-  - require:
-    - file: /root/postgresql/scripts/restore_{{ database.name }}.sh
-
-{% endif %}
-
-{%- endfor %}
+{%- if grains.os_family == "Debian" %}
 
 {%- for database_name, database in server.get('database', {}).iteritems() %}
 
@@ -179,7 +125,7 @@ database_{{ database_name }}_{{ extension_name }}_extension:
 
 {%- endfor %}
 
-{% if database.initial_data is defined %}
+{%- if database.initial_data is defined %}
 
 {%- set engine = database.initial_data.get("engine", "backupninja") %}
 
@@ -202,9 +148,11 @@ restore_postgresql_database_{{ database_name }}:
   - require:
     - file: /root/postgresql/scripts/restore_{{ database_name }}.sh
 
-{% endif %}
+{%- endif %}
 
 {%- endfor %}
+
+{%- endif %}
 
 {% if server.initial_data is defined %}
 
@@ -227,6 +175,5 @@ restore_postgresql_server:
     - file: /root/postgresql/scripts/restore_wal.sh
 
 {% endif %}
-
 
 {%- endif %}
