@@ -1,4 +1,5 @@
 {%- set version = pillar.postgresql.server.get('version', '9.3') %}
+{%- set version_numbers = version|replace('.', '') %}
 {%- set server = salt['grains.filter_by']({
     'Debian': {
         'pkgs': ['postgresql-'+version, 'postgresql-contrib-'+version, 'postgresql-doc-'+version, 'postgresql-server-dev-'+version],
@@ -11,7 +12,7 @@
         'gis': False,
     },
     'RedHat': {
-        'pkgs': ['postgresql'+version|replace(".", "")+'-server', 'postgresql'+version|replace(".", "")+'-contrib'],
+        'pkgs': ['postgresql'+version_numbers+'-server', 'postgresql'+version_numbers+'-contrib']
         'service': 'postgresql-'+version,
         'version': version,
         'init_command': 'service postgresql initdb',
