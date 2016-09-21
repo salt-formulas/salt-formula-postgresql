@@ -58,20 +58,6 @@ postgresql_service:
   - require:
     - file: /root/.pgpass
 
-postgresql_dirs:
-  file.directory:
-  - names:
-    - /root/postgresql/backup
-    - /root/postgresql/flags
-    - /root/postgresql/data
-    - /root/postgresql/scripts
-  - mode: 700
-  - user: root
-  - group: root
-  - makedirs: true
-  - require:
-    - pkg: postgresql_packages
-
 {%- for database_name, database in server.get('database', {}).iteritems() %}
 
 {%- for user in database.users %}
@@ -154,7 +140,21 @@ restore_postgresql_database_{{ database_name }}:
 
 {%- endif %}
 
-{% if server.initial_data is defined %}
+postgresql_dirs:
+  file.directory:
+  - names:
+    - /root/postgresql/backup
+    - /root/postgresql/flags
+    - /root/postgresql/data
+    - /root/postgresql/scripts
+  - mode: 700
+  - user: root
+  - group: root
+  - makedirs: true
+  - require:
+    - pkg: postgresql_packages
+
+{%- if server.initial_data is defined %}
 
 {%- set engine = server.initial_data.get("engine", "barman") %}
 
@@ -174,6 +174,6 @@ restore_postgresql_server:
   - require:
     - file: /root/postgresql/scripts/restore_wal.sh
 
-{% endif %}
+{%- endif %}
 
 {%- endif %}
