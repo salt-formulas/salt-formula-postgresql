@@ -36,6 +36,9 @@ else
     echo "Moving extracted wals data"
     mv $POSTGRESQL_DIR/pgbackup/wals_orig/$WALS_DATA_PATH/* $POSTGRESQL_DIR/pgbackup/wals/
 
+    echo "Creating recovery.conf"
+    echo "restore_command = 'cp $POSTGRESQL_DIR/pgbackup/wals/%f %p'" > $POSTGRESQL_DATA_DIR/recovery.conf
+
     echo "Changing permission to data folder"
     chown postgres:postgres -R $POSTGRESQL_DATA_DIR
     chmod 0700 -R $POSTGRESQL_DATA_DIR 
@@ -43,9 +46,6 @@ else
     echo "Changing permission to wals folder"
     chown postgres:postgres -R $POSTGRESQL_DIR/pgbackup/wals/
     chmod 0700 -R $POSTGRESQL_DIR/pgbackup/wals/
-
-    echo "Creating recovery.conf"
-    echo "restore_command = 'cp $POSTGRESQL_DIR/pgbackup/wals/%f %p'" > $POSTGRESQL_DATA_DIR/recovery.conf
 
     echo "Running Postgresql server for recovery"
     sudo -u postgres $POSTGRESQL_BIN/pg_ctl start -D $POSTGRESQL_DATA_DIR > $POSTGRESQL_DIR/migrate.log 2>&1 &
