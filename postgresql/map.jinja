@@ -1,4 +1,13 @@
-{%- set version = pillar.postgresql.server.get('version', '9.3') %}
+
+{%- if grains.oscodename == "xenial" %}
+{%- set default_version = '9.5' %}
+{%- elif grains.oscodename == "trusty" %}
+{%- set default_version = '9.3' %}
+{%- else %}
+{%- set default_version = '9.5' %}
+{%- endif %}
+
+{%- set version = pillar.postgresql.server.get('version', default_version) %}
 {%- set version_numbers = version|replace('.', '') %}
 {%- set server = salt['grains.filter_by']({
     'Debian': {
