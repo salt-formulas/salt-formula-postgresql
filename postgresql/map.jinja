@@ -11,7 +11,7 @@
 {%- set version_numbers = version|replace('.', '') %}
 {%- set server = salt['grains.filter_by']({
     'Debian': {
-        'pkgs': ['postgresql-'+version, 'postgresql-contrib-'+version, 'postgresql-doc-'+version, 'postgresql-server-dev-'+version],
+        'pkgs': ['postgresql-'+version, 'postgresql-contrib-'+version, 'postgresql-doc-'+version],
         'service': 'postgresql',
         'version': version,
         'init_command': 'pg_createcluster '+version+' main --start',
