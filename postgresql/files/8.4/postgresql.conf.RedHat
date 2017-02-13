@@ -1,4 +1,4 @@
-{%- from "postgresql/map.jinja" import server with context %}
+{%- from "postgresql/map.jinja" import server with context -%}
 # -----------------------------
 # PostgreSQL configuration file
 # -----------------------------

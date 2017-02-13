@@ -124,11 +124,160 @@ PostgreSQL extensions
             rights: 'all privileges'
           extension:
             postgis_topology:
+              enabled: true
             fuzzystrmatch:
+              enabled: true
             postgis_tiger_geocoder:
+              enabled: true
             postgis:
+              enabled: true
+              pkgs:
+              - postgresql-9.1-postgis-2.1
 
-## Sample usage
+Cluster
+=======
+
+Basic streaming replication.
+
+Master node
+-----------
+
+.. code-block:: yaml
+
+  postgresql:
+    server:
+      enabled: true
+      version: 9.6
+      bind:
+        address: 0.0.0.0
+      database:
+        mydb: ...
+    cluster:
+      enabled: true
+      role: master
+      mode: hot_standby
+      members:
+      - host: "172.16.10.101"
+      - host: "172.16.10.102"
+      - host: "172.16.10.103"
+      replication_user:
+        name: repuser
+        password: password
+  keepalived:
+    cluster:
+      enabled: True
+      instance:
+        VIP:
+          notify_action:
+            master:
+              - 'if [ -f /root/postgresql/flags/failover ]; then touch /var/lib/postgresql/${postgresql:server:version}/main/trigger; fi'
+            backup:
+              - 'if [ -f /root/postgresql/flags/failover ]; then service postgresql stop; fi'
+            fault:
+              - 'if [ -f /root/postgresql/flags/failover ]; then service postgresql stop; fi'
+
+Slave node
+----------
+
+.. code-block:: yaml
+
+  postgresql:
+    server:
+      enabled: true
+      version: 9.6
+      bind:
+        address: 0.0.0.0
+    cluster:
+      enabled: true
+      role: slave
+      mode: hot_standby
+      master:
+        host: "172.16.10.100"
+        port: 5432
+        user: repuser
+        password: password
+  keepalived:
+    cluster:
+      enabled: True
+      instance:
+        VIP:
+          notify_action:
+            master:
+              - 'if [ -f /root/postgresql/flags/failover ]; then touch /var/lib/postgresql/${postgresql:server:version}/main/trigger; fi'
+            backup:
+              - 'if [ -f /root/postgresql/flags/failover ]; then service postgresql stop; fi'
+            fault:
+              - 'if [ -f /root/postgresql/flags/failover ]; then service postgresql stop; fi'
+
+Multi-master cluster with 2ndQuadrant bi-directional replication plugin
+
+Master node
+-----------
+
+.. code-block:: yaml
+
+  postgresql:
+    server:
+      enabled: true
+      version: 9.4
+      bind:
+        address: 0.0.0.0
+      database:
+        mydb:
+          extension:
+            bdr:
+              enabled: true
+            btree_gist:
+              enabled: true
+        ...
+    cluster:
+      enabled: true
+      mode: bdr
+      role: master
+      members:
+      - host: "172.16.10.101"
+      - host: "172.16.10.102"
+      - host: "172.16.10.101"
+      local: "172.16.10.101"
+      replication_user:
+        name: repuser
+        password: password
+
+Slave node
+----------
+
+.. code-block:: yaml
+
+  postgresql:
+    server:
+      enabled: true
+      version: 9.4
+      bind:
+        address: 0.0.0.0
+      database:
+        mydb:
+          extension:
+            bdr:
+              enabled: true
+            btree_gist:
+              enabled: true
+        ...
+    cluster:
+      enabled: true
+      mode: bdr
+      role: master
+      members:
+      - host: "172.16.10.101"
+      - host: "172.16.10.102"
+      - host: "172.16.10.101"
+      local: "172.16.10.102"
+      master: "172.16.10.101"
+      replication_user:
+        name: repuser
+        password: password
+
+Sample usage
+============
 
 Init database cluster with given locale
 
@@ -142,7 +291,8 @@ Ubuntu on 14.04 on some machines won't create default cluster
 
     sudo pg_createcluster 9.3 main --start
 
-## Read more
+Read more
+=========
 
 * http://www.postgresql.org/
 * http://www.postgresql.org/docs/9.1/interactive/index.html
