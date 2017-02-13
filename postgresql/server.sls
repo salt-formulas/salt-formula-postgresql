@@ -1,17 +1,22 @@
 {%- from "postgresql/map.jinja" import server with context %}
+{%- from "postgresql/map.jinja" import cluster with context %}
 {%- if server.enabled %}
 
 postgresql_packages:
   pkg.installed:
+  {% if cluster.get("enabled", False) and cluster.get("mode") == "bdr" %}
+  - names: {{ server.bdr_pkgs }}
+  {% else %}
   - names: {{ server.pkgs }}
+  {% endif %}
 
 {%- if grains.os_family == "Debian" %}
 
 init_postgresql_cluster:
-  cmd.run:
-  - name: {{ server.init_command }}
-  - unless: "[ -f {{ server.dir.config }}/postgresql.conf ]"
-  - cwd: /root
+  postgres_cluster.present:
+  - name: main
+  - version: "{{ server.version }}"
+  - datadir: "{{ server.dir.data }}"
   - require:
     - pkg: postgresql_packages
   - require_in:
@@ -87,27 +92,37 @@ postgresql_database_{{ database_name }}:
     - postgres_user: postgresql_user_{{ database_name }}_{{ user.name }}
     {%- endfor %}
 
-{%- if database.extension is defined %}
+{%- for extension_name, extension in database.get('extension', {}).iteritems() %}
 
-postgresql_extensions_packages:
+{%- if extension.enabled %}
+
+{%- if extension.get('pkgs', []) %}
+
+postgresql_{{ extension_name }}_extension_packages:
   pkg.installed:
-  - names:
-    - postgresql-{{ server.version }}-postgis-2.1
-  - skip_suggestions: True
-  - skip_verify: True
+  - names: {{ pkgs }}
 
 {%- endif %}
 
-{%- for extension_name, extension in database.get('extension', {}).iteritems() %}
-
-database_{{ database_name }}_{{ extension_name }}_extension:
+database_{{ database_name }}_{{ extension_name }}_extension_present:
   postgres_extension.present:
   - name: {{ extension_name }}
   - maintenance_db: {{ database_name }}
   - user: postgres
-  - template: template0
   - require:
     - postgres_database: postgresql_database_{{ database_name }}
+
+{%- else %}
+
+database_{{ database_name }}_{{ extension_name }}_extension_absent:
+  postgres_extension.present:
+  - name: {{ extension_name }}
+  - maintenance_db: {{ database_name }}
+  - user: postgres
+  - require:
+    - postgres_database: postgresql_database_{{ database_name }}
+
+{%- endif %}
 
 {%- endfor %}
 

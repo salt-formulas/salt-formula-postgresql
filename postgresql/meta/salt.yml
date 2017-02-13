@@ -1,0 +1,6 @@
+orchestrate:
+  cluster.master:
+    priority: 140
+  cluster.slave:
+    priority: 150
+

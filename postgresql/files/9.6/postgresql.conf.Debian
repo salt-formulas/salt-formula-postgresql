@@ -1,5 +1,4 @@
-{%- from "postgresql/map.jinja" import server with context %}
-
+{%- from "postgresql/map.jinja" import server, cluster with context -%}
 # -----------------------------
 # PostgreSQL configuration file
 # -----------------------------
@@ -40,7 +39,7 @@
 # The default values of these variables are driven from the -D command-line
 # option or PGDATA environment variable, represented here as ConfigDir.
 
-data_directory = '/var/lib/postgresql/9.6/main'        # use data in another directory
+data_directory = '{{ server.dir.data }}'        # use data in another directory
                          # (change requires restart)
 hba_file = '/etc/postgresql/9.6/main/pg_hba.conf' # host-based authentication file
                          # (change requires restart)
@@ -60,7 +59,7 @@ external_pid_file = '/var/run/postgresql/9.6-main.pid'           # write an extr
 {%- if server.bind.address == '0.0.0.0' %}
 listen_addresses = '*'
 {%- else %}
-listen_addresses = 'localhost'{% if server.bind.address != '127.0.0.1' %}, '{{ bind.address }}'{% endif %}
+listen_addresses = 'localhost{% if server.bind.address != "127.0.0.1" %}, {{ server.bind.address }}'{% endif %}
 {%- endif %}
 port = {{ server.bind.get('port', '5432') }}
 
@@ -236,6 +235,23 @@ dynamic_shared_memory_type = posix # the default is the first option
 #------------------------------------------------------------------------------
 
 # - Sending Server(s) -
+
+{%- if cluster.enabled and cluster.get("mode") == "hot_standby" and cluster.role != "master" %}
+hot_standby = on
+{%- endif %}
+
+{%- if cluster.enabled and cluster.get("mode") == "hot_standby" and cluster.role == "master" %}
+
+wal_level = hot_standby
+archive_mode = {{ cluster.archive }}
+
+max_wal_senders = {{ cluster.members|length + 1 }}
+max_replication_slots = {{ cluster.members|length + 1 }}
+
+{%- if cluster.synchronous %}
+synchronous_standby_names = '*'
+{%- endif %}
+{%- endif %}
 
 # Set these on the master and on any standby that will send replication data.
 

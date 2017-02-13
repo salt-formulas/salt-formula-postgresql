@@ -12,11 +12,13 @@
 {%- set server = salt['grains.filter_by']({
     'Debian': {
         'pkgs': ['postgresql-'+version, 'postgresql-contrib-'+version, 'postgresql-doc-'+version],
+        'bdr_pkgs': ['sudo', 'postgresql-bdr-'+version+'-bdr-plugin', 'postgresql-bdr-'+version, 'postgresql-bdr-client-'+version, 'postgresql-bdr-contrib-'+version],
         'service': 'postgresql',
         'version': version,
         'init_command': 'pg_createcluster '+version+' main --start',
         'dir': {
-          'config': '/etc/postgresql/'+version+'/main'
+          'config': '/etc/postgresql/'+version+'/main',
+          'data': '/var/lib/postgresql/'+version+'/main'
         },
         'gis': False,
     },
@@ -31,3 +33,19 @@
         'gis': False,
     },
 }, merge=salt['pillar.get']('postgresql:server')) %}
+
+{%- set cluster = salt['grains.filter_by']({
+    'Debian': {
+        'pkgs': [],
+        'service': 'postgresql',
+        'version': version,
+        'init_command': 'pg_createcluster '+version+' main --start',
+        'dir': {
+          'config': '/etc/postgresql/'+version+'/main',
+          'data': '/var/lib/postgresql/'+version+'/main'
+        },
+        'archive': "off",
+        'synchronous': False,
+        'wal_level': 'hot_standby'
+    }
+}, merge=salt['pillar.get']('postgresql:cluster')) %}
