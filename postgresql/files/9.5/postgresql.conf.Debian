@@ -225,21 +225,22 @@ dynamic_shared_memory_type = posix	# the default is the first option
 
 # Set these on the master and on any standby that will send replication data.
 
-{%- if cluster.enabled and cluster.role != "master" %}
+{%- if cluster.get('enabled', False) %}
+
+{%- if cluster.role != "master" %}
 hot_standby = on
 {%- endif %}
 
-{%- if cluster.enabled and cluster.role == "master" %}
-
+{%- if cluster.role == "master" %}
 wal_level = hot_standby
 archive_mode = {{ cluster.archive }}
-
 max_wal_senders = {{ cluster.members|length + 1 }}
 max_replication_slots = {{ cluster.members|length + 1 }}
-
 {%- if cluster.synchronous %}
 synchronous_standby_names = '*'
 {%- endif %}
+{%- endif %}
+
 {%- endif %}
 
 #max_wal_senders = 0		# max number of walsender processes
