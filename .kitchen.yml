@@ -1,0 +1,43 @@
+---
+driver:
+  name: docker
+  hostname: postgresql.ci.local
+  use_sudo: false
+
+provisioner:
+  name: salt_solo
+  salt_install: bootstrap
+  salt_bootstrap_url: https://bootstrap.saltstack.com
+  salt_version: latest
+  require_chef: false
+  log_level: error
+  formula: postgresql
+  grains:
+    noservices: True
+  state_top:
+    base:
+      "*":
+        - postgresql
+  pillars:
+    top.sls:
+      base:
+        "*":
+          - postgresql
+
+verifier:
+  name: inspec
+  sudo: true
+
+platforms:
+  - name: <%=ENV['PLATFORM'] || 'ubuntu-xenial'%>
+    driver_config:
+      image: <%=ENV['PLATFORM'] || 'trevorj/salty-whales:xenial'%>
+      platform: ubuntu
+
+suites:
+
+  - name: postgresql_server
+    provisioner:
+      pillars-from-files:
+        postgresql.sls: tests/pillar/postgresql_server.sls
+# vim: ft=yaml sw=2 ts=2 sts=2 tw=125
