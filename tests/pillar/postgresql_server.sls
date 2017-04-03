@@ -1,5 +1,11 @@
 postgresql:
   server:
+    clients:
+    - 127.0.0.1
+    bind:
+      address: 127.0.0.1
+      port: 5432
+      protocol: tcp
     enabled: true
     database:
       testing:
@@ -10,4 +16,5 @@ postgresql:
         - name: test
           password: test
           host: localhost
+          createdb: true
           rights: all privileges
