@@ -82,7 +82,7 @@ postgresql_user_{{ database_name }}_{{ user.name }}:
 
 postgresql_database_{{ database_name }}:
   postgres_database.present:
-  - name: {{ database_name }}
+  - name: {{ database.get('name', database_name) }}
   - encoding: {{ database.encoding }}
   - user: postgres
   - template: template0
