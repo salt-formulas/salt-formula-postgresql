@@ -7,7 +7,7 @@
 {%- set default_version = '9.5' %}
 {%- endif %}
 
-{%- set version = pillar.postgresql.server.get('version', default_version) %}
+{%- set version = pillar.postgresql.server.get('version', default_version)|string %}
 {%- set version_numbers = version|replace('.', '') %}
 {%- set server = salt['grains.filter_by']({
     'Debian': {
