@@ -11,11 +11,11 @@
 {%- set version_numbers = version|replace('.', '') %}
 {%- set server = salt['grains.filter_by']({
     'Debian': {
-        'pkgs': ['postgresql-'+version, 'postgresql-contrib-' ~ version, 'postgresql-doc-' ~ version],
-        'bdr_pkgs': ['sudo', 'postgresql-bdr-'+version+'-bdr-plugin', 'postgresql-bdr-' ~ version, 'postgresql-bdr-client-' ~ version, 'postgresql-bdr-contrib-' ~ version],
+        'pkgs': ['postgresql-' ~ version, 'postgresql-contrib-' ~ version, 'postgresql-doc-' ~ version],
+        'bdr_pkgs': ['sudo', 'postgresql-bdr-' ~ version ~ '-bdr-plugin', 'postgresql-bdr-' ~ version, 'postgresql-bdr-client-' ~ version, 'postgresql-bdr-contrib-' ~ version],
         'service': 'postgresql',
         'version': version,
-        'init_command': 'pg_createcluster '+version+' main --start',
+        'init_command': 'pg_createcluster ' ~ version ~ ' main --start',
         'dir': {
           'config': '/etc/postgresql/' ~ version ~ '/main',
           'data': '/var/lib/postgresql/' ~ version ~ '/main'
