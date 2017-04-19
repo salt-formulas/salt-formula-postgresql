@@ -64,45 +64,17 @@ postgresql_service:
     - file: /root/.pgpass
 
 {%- for database_name, database in server.get('database', {}).iteritems() %}
+  {%- include "postgresql/_database.sls" %}
 
-{%- for user in database.users %}
-
-postgresql_user_{{ database_name }}_{{ user.name }}:
-  postgres_user.present:
-  - name: {{ user.name }}
-  - user: postgres
-  {% if user.get('createdb', False) %}
-  - createdb: enabled
-  {% endif %}
-  - password: {{ user.password }}
-  - require:
-    - service: postgresql_service
-
-{%- endfor %}
-
-postgresql_database_{{ database_name }}:
-  postgres_database.present:
-  - name: {{ database.get('name', database_name) }}
-  - encoding: {{ database.encoding }}
-  - user: postgres
-  - template: template0
-  - owner: {% for user in database.users %}{% if loop.first %}{{ user.name }}{% endif %}{% endfor %}
-  - require:
-    {%- for user in database.users %}
-    - postgres_user: postgresql_user_{{ database_name }}_{{ user.name }}
-    {%- endfor %}
-
-{%- for extension_name, extension in database.get('extension', {}).iteritems() %}
-
-{%- if extension.enabled %}
-
-{%- if extension.get('pkgs', []) %}
+  {%- for extension_name, extension in database.get('extension', {}).iteritems() %}
+    {%- if extension.enabled %}
+    {%- if extension.get('pkgs', []) %}
 
 postgresql_{{ extension_name }}_extension_packages:
   pkg.installed:
   - names: {{ pkgs }}
 
-{%- endif %}
+    {%- endif %}
 
 database_{{ database_name }}_{{ extension_name }}_extension_present:
   postgres_extension.present:
@@ -112,7 +84,7 @@ database_{{ database_name }}_{{ extension_name }}_extension_present:
   - require:
     - postgres_database: postgresql_database_{{ database_name }}
 
-{%- else %}
+    {%- else %}
 
 database_{{ database_name }}_{{ extension_name }}_extension_absent:
   postgres_extension.present:
@@ -122,35 +94,8 @@ database_{{ database_name }}_{{ extension_name }}_extension_absent:
   - require:
     - postgres_database: postgresql_database_{{ database_name }}
 
-{%- endif %}
-
-{%- endfor %}
-
-{%- if database.initial_data is defined %}
-
-{%- set engine = database.initial_data.get("engine", "backupninja") %}
-
-/root/postgresql/scripts/restore_{{ database_name }}.sh:
-  file.managed:
-  - source: salt://postgresql/files/restore.sh
-  - mode: 770
-  - template: jinja
-  - defaults:
-    database_name: {{ database_name }}
-  - require: 
-    - file: postgresql_dirs
-    - postgres_database: postgresql_database_{{ database_name }}
-
-restore_postgresql_database_{{ database_name }}:
-  cmd.run:
-  - name: /root/postgresql/scripts/restore_{{ database_name }}.sh
-  - unless: "[ -f /root/postgresql/flags/{{ database_name }}-installed ]"
-  - cwd: /root
-  - require:
-    - file: /root/postgresql/scripts/restore_{{ database_name }}.sh
-
-{%- endif %}
-
+    {%- endif %}
+  {%- endfor %}
 {%- endfor %}
 
 {%- endif %}
@@ -178,7 +123,7 @@ postgresql_dirs:
   - source: salt://postgresql/files/restore_wal.sh
   - mode: 770
   - template: jinja
-  - require: 
+  - require:
     - file: postgresql_dirs
 
 restore_postgresql_server:

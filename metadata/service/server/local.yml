@@ -1,7 +1,7 @@
 applications:
 - postgresql
 classes:
-- service.postgresql.support
+- service.postgresql.server.support
 parameters:
   postgresql:
     server:
