@@ -1,0 +1,13 @@
+parameters:
+  postgresql:
+    _support:
+      backupninja:
+        enabled: false
+      collectd:
+        enabled: false
+      heka:
+        enabled: false
+      sensu:
+        enabled: false
+      sphinx:
+        enabled: true

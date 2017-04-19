@@ -1,0 +1,8 @@
+applications:
+- postgresql
+classes:
+- service.postgresql.client.support
+parameters:
+  postgresql:
+    client:
+      enabled: true

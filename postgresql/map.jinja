@@ -7,7 +7,7 @@
 {%- set default_version = '9.5' %}
 {%- endif %}
 
-{%- set version_uni = pillar.postgresql.server.get('version', default_version)|string %}
+{%- set version_uni = pillar.postgresql.get('server', {}).get('version', default_version)|string %}
 {%- set version = version_uni.encode() %}
 {%- set version_numbers = version|replace('.', '') %}
 {%- set server = salt['grains.filter_by']({
@@ -50,3 +50,9 @@
         'wal_level': 'hot_standby'
     }
 }, merge=salt['pillar.get']('postgresql:cluster')) %}
+
+{%- set client = salt['grains.filter_by']({
+    'Debian': {
+        'pkgs': ['postgresql-client'],
+    }
+}, merge=salt['pillar.get']('postgresql:client')) %}

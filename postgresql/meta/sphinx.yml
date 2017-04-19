@@ -1,10 +1,18 @@
-{%- from "postgresql/map.jinja" import server with context %}
 doc:
   name: postgresql
   description: PostgreSQL is an object-relational database management system.
   role:
+    {%- if pillar.postgresql.server is defined %}
+      {%- from "postgresql/map.jinja" import server with context %}
     server:
       name: server
       param:
         bind:
           value: {{ server.bind.address }}:{{ server.bind.port }}
+    {%- endif %}
+    {%- if pillar.postgresql.client is defined %}
+      {%- from "postgresql/map.jinja" import client with context %}
+    client:
+      name: client
+      param: {}
+    {%- endif %}

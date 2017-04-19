@@ -40,4 +40,8 @@ suites:
     provisioner:
       pillars-from-files:
         postgresql.sls: tests/pillar/postgresql_server.sls
+  - name: postgresql_client
+    provisioner:
+      pillars-from-files:
+        postgresql.sls: tests/pillar/postgresql_client.sls
 # vim: ft=yaml sw=2 ts=2 sts=2 tw=125
