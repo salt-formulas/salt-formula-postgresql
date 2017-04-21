@@ -16,6 +16,7 @@ postgresql_user_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ user.
     {%- for k, p in admin.iteritems() %}
     - db_{{ k }}: {{ p }}
     {%- endfor %}
+    - user: root
     {%- endif %}
 
 {%- endfor %}
@@ -29,12 +30,13 @@ postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}:
     - owner: {% for user in database.users %}{% if loop.first %}{{ user.name }}{% endif %}{% endfor %}
     - require:
         {%- for user in database.users %}
-        - postgres_user: postgresql_user_{{ database_name }}_{{ user.name }}
+        - postgres_user: postgresql_user_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ user.name }}
         {%- endfor %}
     {%- if admin is defined %}
     {%- for k, p in admin.iteritems() %}
     - db_{{ k }}: {{ p }}
     {%- endfor %}
+    - user: root
     {%- endif %}
 
 {%- if database.initial_data is defined %}
