@@ -26,7 +26,9 @@ postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}:
     - name: {{ database.get('name', database_name) }}
     - encoding: {{ database.encoding }}
     - user: postgres
-    - template: template0
+    {%- if database.template is defined %}
+    - template: {{ database.template }}
+    {%- endif %}
     - owner: {% for user in database.users %}{% if loop.first %}{{ user.name }}{% endif %}{% endfor %}
     - require:
         {%- for user in database.users %}
