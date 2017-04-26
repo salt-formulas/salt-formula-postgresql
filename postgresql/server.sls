@@ -12,6 +12,7 @@ postgresql_packages:
 
 {%- if grains.os_family == "Debian" %}
 
+{% if not grains.get('noservices', False) %}
 init_postgresql_cluster:
   postgres_cluster.present:
   - name: main
@@ -22,6 +23,7 @@ init_postgresql_cluster:
   - require_in:
     - file: {{ server.dir.config }}/pg_hba.conf
     - file: {{ server.dir.config }}/postgresql.conf
+{%- endif %}
 
 {{ server.dir.config }}/pg_hba.conf:
   file.managed:
@@ -53,6 +55,7 @@ init_postgresql_cluster:
 
 {%- if grains.os_family == "Debian" %}
 
+{% if not grains.get('noservices', False) %}
 postgresql_service:
   service.running:
   - name: {{ server.service }}
@@ -62,6 +65,7 @@ postgresql_service:
     - file: {{ server.dir.config }}/postgresql.conf
   - require:
     - file: /root/.pgpass
+{%- endif %}
 
 {%- for database_name, database in server.get('database', {}).iteritems() %}
   {%- include "postgresql/_database.sls" %}
@@ -76,6 +80,7 @@ postgresql_{{ extension_name }}_extension_packages:
 
     {%- endif %}
 
+{% if not grains.get('noservices', False) %}
 database_{{ database_name }}_{{ extension_name }}_extension_present:
   postgres_extension.present:
   - name: {{ extension_name }}
@@ -93,6 +98,7 @@ database_{{ database_name }}_{{ extension_name }}_extension_absent:
   - user: postgres
   - require:
     - postgres_database: postgresql_database_{{ database_name }}
+{%- endif %}
 
     {%- endif %}
   {%- endfor %}
