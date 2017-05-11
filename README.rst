@@ -296,6 +296,11 @@ Client
                   host: localhost
                   createdb: true
                   rights: all privileges
+                init:
+                  maintenance_db: mydb
+                  queries:
+                  - INSERT INTO login VALUES (11, 1) ;
+                  - INSERT INTO device VALUES (1, 11, 42);
 
 
 Sample usage
