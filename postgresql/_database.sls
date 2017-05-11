@@ -43,6 +43,24 @@ postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}:
     {%- endif %}
 {%- endif %}
 
+{%- if database.init is defined %}
+{%- for query in database.init.get('queries', []) %}
+{% set maintenance_db = database.init.get('maintenance_db', database_name) %}
+postgresql_database_{{ svr_name|default('localhost') }}_{{ maintenance_db }}_{{ loop.index }}:
+  cmd.run:
+    - name: "psql -h {{ admin.get('host', 'localhost') }} \
+             -U {{ admin.get('user', 'root') }} \
+             -d {{ maintenance_db }} \
+             -c \"{{ query }} \" "
+      env: 
+        PGPASSWORD: {{ admin.get('password', '') }}
+      {%- if not database.init.get('force', false) == true %}
+      onchanges: 
+        - postgres_database: postgresql_database_{{ svr_name|default('localhost') }}_{{ maintenance_db }}
+      {%- endif %}
+{%- endfor %}
+{%- endif %}
+
 {%- if database.initial_data is defined %}
 
 {%- set engine = database.initial_data.get("engine", "backupninja") %}
