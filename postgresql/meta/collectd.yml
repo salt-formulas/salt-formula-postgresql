@@ -1,0 +1,8 @@
+{%- from "postgresql/map.jinja" import server with context %}
+{%- if server.enabled %}
+local_plugin:
+  collectd_postgresql:
+    plugin: postgresql
+    template: collectd/files/collectd_postgresql.conf
+    data: {{ server.database|yaml }}
+{%- endif %}

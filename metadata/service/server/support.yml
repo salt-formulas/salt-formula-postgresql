@@ -4,7 +4,7 @@ parameters:
       backupninja:
         enabled: true
       collectd:
-        enabled: false
+        enabled: true
       heka:
         enabled: false
       sensu:
