@@ -1,4 +1,4 @@
-{%- for user in database.users %}
+{%- for user in database.get('users', []) %}
 {% if not grains.get('noservices', False) %}
 postgresql_user_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ user.name }}:
   postgres_user.present:

@@ -34,14 +34,14 @@ Single database server with empty database
         clients:
         - 127.0.0.1
         database:
-          name: 'databasename'
-          encoding: 'UTF8'
-          locale: 'cs_CZ'
-          user:
-            name: 'username'
-            password: 'password'
-            host: 'localhost'
-            rights: 'all privileges'
+          databasename:
+            encoding: 'UTF8'
+            locale: 'cs_CZ'
+            users:
+              - name: 'username'
+                password: 'password'
+                host: 'localhost'
+                rights: 'all privileges'
 
 Single database server with initial data
 
@@ -58,19 +58,19 @@ Single database server with initial data
         clients:
         - 127.0.0.1
         database:
-          name: 'databasename'
-          encoding: 'UTF8'
-          locale: 'cs_CZ'
-          initial_data:
-            engine: backupninja
-            source: backup.host
-            host: original-host-name
-            database: original-database-name
-          users:
-          - name: 'username'
-            password: 'password'
-            host: 'localhost'
-            rights: 'all privileges'
+          databasename:
+            encoding: 'UTF8'
+            locale: 'cs_CZ'
+            initial_data:
+              engine: backupninja
+              source: backup.host
+              host: original-host-name
+              database: original-database-name
+            users:
+            - name: 'username'
+              password: 'password'
+              host: 'localhost'
+              rights: 'all privileges'
 
 User with createdb privileges
 
@@ -87,15 +87,15 @@ User with createdb privileges
         clients:
         - 127.0.0.1
         database:
-          name: 'databasename'
-          encoding: 'UTF8'
-          locale: 'cs_CZ'
-          users:
-          - name: 'username'
-            password: 'password'
-            host: 'localhost'
-            createdb: true
-            rights: 'all privileges'
+          databasename:
+            encoding: 'UTF8'
+            locale: 'cs_CZ'
+            users:
+              - name: 'username'
+                password: 'password'
+                host: 'localhost'
+                createdb: true
+                rights: 'all privileges'
 
 Database extensions
 
@@ -112,26 +112,26 @@ Database extensions
         clients:
         - 127.0.0.1
         database:
-          name: 'databasename'
-          encoding: 'UTF8'
-          locale: 'cs_CZ'
-          users:
-          - name: 'username'
-            password: 'password'
-            host: 'localhost'
-            createdb: true
-            rights: 'all privileges'
-          extension:
-            postgis_topology:
-              enabled: true
-            fuzzystrmatch:
-              enabled: true
-            postgis_tiger_geocoder:
-              enabled: true
-            postgis:
-              enabled: true
-              pkgs:
-              - postgresql-9.1-postgis-2.1
+          databasename:
+            encoding: 'UTF8'
+            locale: 'cs_CZ'
+            users:
+              - name: 'username'
+                password: 'password'
+                host: 'localhost'
+                createdb: true
+                rights: 'all privileges'
+            extension:
+              postgis_topology:
+                enabled: true
+              fuzzystrmatch:
+                enabled: true
+              postgis_tiger_geocoder:
+                enabled: true
+              postgis:
+                enabled: true
+                pkgs:
+                - postgresql-9.1-postgis-2.1
 
 
 Master-slave cluster
