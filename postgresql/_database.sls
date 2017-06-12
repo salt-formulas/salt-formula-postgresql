@@ -1,5 +1,4 @@
 {%- for user in database.get('users', []) %}
-{% if not grains.get('noservices', False) %}
 postgresql_user_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ user.name }}:
   postgres_user.present:
     - name: {{ user.name }}
@@ -18,10 +17,11 @@ postgresql_user_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ user.
     {%- endfor %}
     - user: root
     {%- endif %}
-{%- endif %}
+    {%- if grains.get('noservices') %}
+    - onlyif: /bin/false
+   {%- endif %}
 {%- endfor %}
 
-{% if not grains.get('noservices', False) %}
 postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}:
   postgres_database.present:
     - name: {{ database.get('name', database_name) }}
@@ -41,7 +41,9 @@ postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}:
     {%- endfor %}
     - user: root
     {%- endif %}
-{%- endif %}
+    {%- if grains.get('noservices') %}
+    - onlyif: /bin/false
+    {%- endif %}
 
 {%- if database.init is defined %}
 {%- for query in database.init.get('queries', []) %}
@@ -95,14 +97,15 @@ postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ n
         - file: postgresql_dirs
         - postgres_database: postgresql_database_{{ database_name }}
 
-{% if not grains.get('noservices', False) %}
 restore_postgresql_database_{{ database_name }}:
   cmd.run:
     - name: /root/postgresql/scripts/restore_{{ database_name }}.sh
     - unless: "[ -f /root/postgresql/flags/{{ database_name }}-installed ]"
     - cwd: /root
+    {%- if grains.get('noservices') %}
+    - onlyif: /bin/false
+    {%- endif %}
     - require:
         - file: /root/postgresql/scripts/restore_{{ database_name }}.sh
-{%- endif %}
 
 {%- endif %}
