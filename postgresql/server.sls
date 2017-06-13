@@ -12,18 +12,19 @@ postgresql_packages:
 
 {%- if grains.os_family == "Debian" %}
 
-{% if not grains.get('noservices', False) %}
 init_postgresql_cluster:
   postgres_cluster.present:
   - name: main
   - version: "{{ server.version }}"
   - datadir: "{{ server.dir.data }}"
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
   - require:
     - pkg: postgresql_packages
   - require_in:
     - file: {{ server.dir.config }}/pg_hba.conf
     - file: {{ server.dir.config }}/postgresql.conf
-{%- endif %}
 
 {{ server.dir.config }}/pg_hba.conf:
   file.managed:
@@ -55,17 +56,18 @@ init_postgresql_cluster:
 
 {%- if grains.os_family == "Debian" %}
 
-{% if not grains.get('noservices', False) %}
 postgresql_service:
   service.running:
   - name: {{ server.service }}
   - enable: true
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
   - watch:
     - file: {{ server.dir.config }}/pg_hba.conf
     - file: {{ server.dir.config }}/postgresql.conf
   - require:
     - file: /root/.pgpass
-{%- endif %}
 
 {%- for database_name, database in server.get('database', {}).iteritems() %}
   {%- include "postgresql/_database.sls" %}
@@ -80,12 +82,14 @@ postgresql_{{ extension_name }}_extension_packages:
 
     {%- endif %}
 
-{% if not grains.get('noservices', False) %}
 database_{{ database_name }}_{{ extension_name }}_extension_present:
   postgres_extension.present:
   - name: {{ extension_name }}
   - maintenance_db: {{ database_name }}
   - user: postgres
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
   - require:
     - postgres_database: postgresql_database_{{ database_name }}
 
@@ -96,9 +100,11 @@ database_{{ database_name }}_{{ extension_name }}_extension_absent:
   - name: {{ extension_name }}
   - maintenance_db: {{ database_name }}
   - user: postgres
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
   - require:
     - postgres_database: postgresql_database_{{ database_name }}
-{%- endif %}
 
     {%- endif %}
   {%- endfor %}
