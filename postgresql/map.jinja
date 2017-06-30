@@ -1,13 +1,10 @@
+{%- set default_version = salt['grains.filter_by']({
+    'xenial': '9.5',
+    'trusty': '9.3',
+    'default': '9.5',
+}, grain='oscodename') %}
 
-{%- if grains.oscodename == "xenial" %}
-{%- set default_version = '9.5' %}
-{%- elif grains.oscodename == "trusty" %}
-{%- set default_version = '9.3' %}
-{%- else %}
-{%- set default_version = '9.5' %}
-{%- endif %}
-
-{%- set version_uni = pillar.postgresql.get('server', {}).get('version', default_version)|string %}
+{%- set version_uni = salt['pillar.get']('postgresql:server:version', default=default_version)|string %}
 {%- set version = version_uni.encode() %}
 {%- set version_numbers = version|replace('.', '') %}
 {%- set server = salt['grains.filter_by']({
