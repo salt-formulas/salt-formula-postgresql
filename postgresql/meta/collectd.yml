@@ -1,3 +1,4 @@
+{% if pillar.postgresql.server is defined %}
 {%- from "postgresql/map.jinja" import server with context %}
 {%- if server.enabled %}
 local_plugin:
@@ -5,4 +6,5 @@ local_plugin:
     plugin: postgresql
     template: collectd/files/collectd_postgresql.conf
     data: {{ server.database|yaml }}
+{%- endif %}
 {%- endif %}
