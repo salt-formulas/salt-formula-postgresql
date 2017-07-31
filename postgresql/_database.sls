@@ -95,7 +95,7 @@ postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ n
       database_name: {{ database_name }}
     - require:
         - file: postgresql_dirs
-        - postgres_database: postgresql_database_{{ database_name }}
+        - postgres_database: postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}
 
 restore_postgresql_database_{{ database_name }}:
   cmd.run:
