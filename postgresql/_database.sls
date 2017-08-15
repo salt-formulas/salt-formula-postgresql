@@ -60,6 +60,8 @@ postgresql_database_{{ svr_name|default('localhost') }}_{{ maintenance_db }}_{{ 
       onchanges: 
         - postgres_database: postgresql_database_{{ svr_name|default('localhost') }}_{{ maintenance_db }}
       {%- endif %}
+      require:
+        - postgres_database: postgresql_database_{{ svr_name|default('localhost') }}_{{ maintenance_db }}
 {%- endfor %}
 {%- endif %}
 
