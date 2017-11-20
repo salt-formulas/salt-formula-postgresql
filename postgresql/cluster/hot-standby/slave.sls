@@ -31,7 +31,7 @@ postgresql_slave_dirs:
 restore_postgresql_cluster:
   cmd.run:
   - names:
-    - pg_basebackup --host {{ cluster.master.host }} -U {{ cluster.master.user }} --xlog-method=stream -D {{ cluster.dir.data }} -w -d "password={{ cluster.master.password }}" -v && touch {{ cluster.dir.data }}/cluster-created
+    - pg_basebackup --host {{ cluster.master.host }} --port {{ cluster.master.get("port", 5432) }} -U {{ cluster.master.user }} --xlog-method=stream -D {{ cluster.dir.data }} -w -d "password={{ cluster.master.password }}" -v && touch {{ cluster.dir.data }}/cluster-created
   - unless: "[ -f {{ cluster.dir.data }}/cluster-created ]"
   - user: postgres
   - cwd: /var/lib/postgresql
