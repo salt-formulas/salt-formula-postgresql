@@ -43,6 +43,30 @@ Single database server with empty database
                 host: 'localhost'
                 rights: 'all privileges'
 
+With custom settings
+
+.. code-block:: yaml
+
+    postgresql:
+      server:
+        ...
+        settings:
+          max_connections: 300
+          timezone: "'UTC'"
+          ...
+
+With custom hba records
+
+.. code-block:: yaml
+
+    postgresql:
+      server:
+        ...
+        hba_records:
+          - 'host   all    all    192.168.0.101/32   trust'
+          - 'host   all    all    0.0.0.0/0   md5'
+          ...
+
 Single database server with initial data
 
 .. code-block:: yaml
