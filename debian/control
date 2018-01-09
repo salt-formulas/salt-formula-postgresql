@@ -10,6 +10,6 @@ Vcs-Git: https://github.com/tcpcloud/salt-formula-postgresql.git
 
 Package: salt-formula-postgresql
 Architecture: all
-Depends: ${misc:Depends}, salt-master, reclass
+Depends: ${misc:Depends}
 Description: PostgreSQL salt formula
  Install and configure PostgreSQL database.
