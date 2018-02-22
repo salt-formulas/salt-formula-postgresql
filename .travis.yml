@@ -17,10 +17,12 @@ install:
   - bundle install
 
 env:
-  - PLATFORM=trevorj/salty-whales:trusty SUITE=postgresql-server
-  - PLATFORM=trevorj/salty-whales:xenial SUITE=postgresql-server
-  - PLATFORM=trevorj/salty-whales:trusty SUITE=postgresql-client
-  - PLATFORM=trevorj/salty-whales:xenial SUITE=postgresql-client
+  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2016.3 SUITE=postgresql-server
+  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2016.3 SUITE=postgresql-client
+  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2017.7 SUITE=postgresql-server
+  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2017.7 SUITE=postgresql-client
+  # - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-bionic-salt-2017.7 SUITE=postgresql-server
+  # - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-bionic-salt-2017.7 SUITE=postgresql-client
 
 before_script:
   - set -o pipefail
