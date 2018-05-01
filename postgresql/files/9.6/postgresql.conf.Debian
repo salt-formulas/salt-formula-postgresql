@@ -59,7 +59,7 @@ external_pid_file = '/var/run/postgresql/9.6-main.pid'           # write an extr
 {%- if server.bind.address == '0.0.0.0' %}
 listen_addresses = '*'
 {%- else %}
-listen_addresses = 'localhost{% if server.bind.address != "127.0.0.1" %}, {{ server.bind.address }}'{% endif %}
+listen_addresses = 'localhost{% if server.bind.address != "127.0.0.1" %}, {{ server.bind.address }}{% endif %}'
 {%- endif %}
 port = {{ server.bind.get('port', '5432') }}
 

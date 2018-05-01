@@ -34,6 +34,7 @@
 
 {%- set cluster = salt['grains.filter_by']({
     'Debian': {
+        'enabled': false,
         'pkgs': [],
         'service': 'postgresql',
         'version': version,
