@@ -3,6 +3,9 @@ postgresql_user_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ user.
   postgres_user.present:
     - name: {{ user.name }}
     - user: postgres
+    {% if user.get('superuser', False) %}
+    - superuser: enabled
+    {% endif %}
     {% if user.get('createdb', False) %}
     - createdb: enabled
     {% endif %}
