@@ -1,6 +1,7 @@
 {%- set default_version = salt['grains.filter_by']({
     'xenial': '9.5',
     'trusty': '9.3',
+    'bionic': '10',
     'default': '9.5',
 }, grain='oscodename') %}
 
