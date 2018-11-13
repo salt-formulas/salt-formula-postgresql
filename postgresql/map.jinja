@@ -1,7 +1,8 @@
 {%- set default_version = salt['grains.filter_by']({
+    'bionic': '10',
     'xenial': '9.5',
     'trusty': '9.3',
-    'default': '9.5',
+    'default': '10',
 }, grain='oscodename') %}
 
 {%- set version_uni = salt['pillar.get']('postgresql:server:version', default=default_version)|string %}
@@ -9,7 +10,7 @@
 {%- set version_numbers = version|replace('.', '') %}
 {%- set server = salt['grains.filter_by']({
     'Debian': {
-        'pkgs': ['postgresql-' + version, 'postgresql-contrib-' + version, 'postgresql-doc-' + version],
+        'pkgs': ['postgresql-' + version, 'postgresql-contrib', 'postgresql-doc'],
         'bdr_pkgs': ['sudo', 'postgresql-bdr-' + version + '-bdr-plugin', 'postgresql-bdr-' + version, 'postgresql-bdr-client-' + version, 'postgresql-bdr-contrib-' + version],
         'service': 'postgresql',
         'version': version,
