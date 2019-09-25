@@ -68,25 +68,6 @@ postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ m
 {%- endfor %}
 {%- endif %}
 
-{%- for name, extension in database.get('extension', {}).items() %}
-postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ name }}:
-  {%- if extension.get('enabled', true) %}
-  postgres_extension.present:
-    - schema: {{ extension.get('schema', 'public') }}
-  {%- else %}
-  postgres_extension.absent:
-  {%- endif %}
-    - name: {{ name }}
-    - maintenance_db: {{ database_name }}
-    - user: root
-    {%- if admin is defined %}
-    {%- for k, p in admin.items() %}
-    - db_{{ k }}: {{ p }}
-    {%- endfor %}
-    - user: root
-    {%- endif %}
-{%- endfor %}
-
 {%- if database.initial_data is defined %}
 
 {%- set engine = database.initial_data.get("engine", "backupninja") %}
