@@ -15,7 +15,7 @@ postgresql_user_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ user.
         - service: postgresql_service
     {%- endif %}
     {%- if admin is defined %}
-    {%- for k, p in admin.iteritems() %}
+    {%- for k, p in admin.items() %}
     - db_{{ k }}: {{ p }}
     {%- endfor %}
     - user: root
@@ -39,7 +39,7 @@ postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}:
         - postgres_user: postgresql_user_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ user.name }}
         {%- endfor %}
     {%- if admin is defined %}
-    {%- for k, p in admin.iteritems() %}
+    {%- for k, p in admin.items() %}
     - db_{{ k }}: {{ p }}
     {%- endfor %}
     - user: root
@@ -68,7 +68,7 @@ postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ m
 {%- endfor %}
 {%- endif %}
 
-{%- for name, extension in database.get('extension', {}).iteritems() %}
+{%- for name, extension in database.get('extension', {}).items() %}
 postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ name }}:
   {%- if extension.get('enabled', true) %}
   postgres_extension.present:
@@ -80,7 +80,7 @@ postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ n
     - maintenance_db: {{ database_name }}
     - user: root
     {%- if admin is defined %}
-    {%- for k, p in admin.iteritems() %}
+    {%- for k, p in admin.items() %}
     - db_{{ k }}: {{ p }}
     {%- endfor %}
     - user: root

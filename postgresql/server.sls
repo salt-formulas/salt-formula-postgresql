@@ -65,10 +65,10 @@ postgresql_service:
   - require:
     - file: /root/.pgpass
 
-{%- for database_name, database in server.get('database', {}).iteritems() %}
+{%- for database_name, database in server.get('database', {}).items() %}
   {%- include "postgresql/_database.sls" %}
 
-  {%- for extension_name, extension in database.get('extension', {}).iteritems() %}
+  {%- for extension_name, extension in database.get('extension', {}).items() %}
     {%- if extension.enabled %}
     {%- if extension.get('pkgs', []) %}
 

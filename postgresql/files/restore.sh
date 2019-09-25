@@ -23,7 +23,7 @@ touch /root/postgresql/flags/{{ database.name }}-installed
 {%- endif %}
 {%- endfor %}
 
-{%- for db_name,database in pillar.postgresql.server.get("database", {}).iteritems() %}
+{%- for db_name,database in pillar.postgresql.server.get("database", {}).items() %}
 {%- if db_name == database_name %}
 
 {%- set age = database.initial_data.get("age", "0") %}

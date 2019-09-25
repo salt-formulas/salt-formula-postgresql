@@ -3,13 +3,13 @@
 {%- for database in server.get('databases', []) %}
 {{ client }}:{{ server.bind.port }}:{{ database.name }}:{% for user in database.users %}{% if loop.first %}{{ user.name }}:{{ user.password }}{% endif %}{% endfor %}
 {%- endfor %}
-{%- for database_name, database in server.get('database', {}).iteritems() %}
+{%- for database_name, database in server.get('database', {}).items() %}
 {{ client }}:{{ server.bind.port }}:{{ database_name }}:{% for user in database.users %}{% if loop.first %}{{ user.name }}:{{ user.password }}{% endif %}{% endfor %}
 {%- endfor %}
 {%- endfor %}
 {%- for database in server.get('databases', []) %}
 localhost:{{ server.bind.port }}:{{ database.name }}:{% for user in database.users %}{% if loop.first %}{{ user.name }}:{{ user.password }}{% endif %}{% endfor %}
 {%- endfor %}
-{%- for database_name, database in server.get('database', {}).iteritems() %}
+{%- for database_name, database in server.get('database', {}).items() %}
 localhost:{{ server.bind.port }}:{{ database_name }}:{% for user in database.users %}{% if loop.first %}{{ user.name }}:{{ user.password }}{% endif %}{% endfor %}
 {%- endfor %}

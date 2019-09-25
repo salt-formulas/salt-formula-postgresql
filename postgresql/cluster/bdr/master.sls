@@ -17,7 +17,7 @@ postgresql_user_cluster_repuser:
 
 {%- set nodename = salt.grains.get('nodename') %}
 
-{%- for database_name, database in server.get('database', {}).iteritems() %}
+{%- for database_name, database in server.get('database', {}).items() %}
 bdr_group_create_{{ database_name }}:
   module.run:
     - name: postgres.psql_query
