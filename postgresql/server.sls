@@ -74,7 +74,7 @@ postgresql_service:
 
 postgresql_{{ extension_name }}_extension_packages:
   pkg.installed:
-  - names: {{ pkgs }}
+  - names: {{ extension.get('pkgs', []) }}
 
     {%- endif %}
 
