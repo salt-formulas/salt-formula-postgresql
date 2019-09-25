@@ -61,10 +61,10 @@ postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ m
         PGPASSWORD: {{ admin.get('password', '') }}
       {%- if not database.init.get('force', false) == true %}
       onchanges:
-        - postgres_database: postgresql_database_{{ svr_name|default('localhost') }}_{{ maintenance_db }}
+        - postgres_database: {{ svr_name|default('localhost') }}_{{ maintenance_db }}
       {%- endif %}
       require:
-        - postgres_database: postgresql_database_{{ svr_name|default('localhost') }}_{{ maintenance_db }}
+        - postgres_database: {{ svr_name|default('localhost') }}_{{ maintenance_db }}
 {%- endfor %}
 {%- endif %}
 
@@ -100,7 +100,7 @@ postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ n
       database_name: {{ database_name }}
     - require:
         - file: postgresql_dirs
-        - postgres_database: postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}
+        - postgres_database: {{ svr_name|default('localhost') }}_{{ database_name }}
 
 restore_postgresql_database_{{ database_name }}:
   cmd.run:

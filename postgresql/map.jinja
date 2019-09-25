@@ -5,25 +5,24 @@
     'default': '10',
 }, grain='oscodename') %}
 
-{%- set version_uni = salt['pillar.get']('postgresql:server:version', default=default_version)|string %}
-{%- set version = version_uni.encode() %}
+{%- set version = salt['pillar.get']('postgresql:server:version', default=default_version)|string %}
 {%- set version_numbers = version|replace('.', '') %}
 {%- set server = salt['grains.filter_by']({
     'Debian': {
-        'pkgs': ['postgresql-{}'.format(version), 'postgresql-contrib', 'postgresql-doc'],
-        'bdr_pkgs': ['sudo', 'postgresql-bdr-{}-bdr-plugin'.format(version), 'postgresql-bdr-{}'.format(version), 'postgresql-bdr-client-{}'.format(version), 'postgresql-bdr-contrib-{}'.format(version)],
+        'pkgs': ['postgresql-{:s}'.format(version), 'postgresql-contrib', 'postgresql-doc'],
+        'bdr_pkgs': ['sudo', 'postgresql-bdr-{:s}-bdr-plugin'.format(version), 'postgresql-bdr-{:s}'.format(version), 'postgresql-bdr-client-{:s}'.format(version), 'postgresql-bdr-contrib-{:s}'.format(version)],
         'service': 'postgresql',
         'version': version,
-        'init_command': 'pg_createcluster {} main --start'.format(version),
+        'init_command': 'pg_createcluster {:s} main --start'.format(version),
         'dir': {
-          'config': '/etc/postgresql/{}/main'.format(version),
-          'data': '/var/lib/postgresql/{}/main'.format(version)
+          'config': '/etc/postgresql/{:s}/main'.format(version),
+          'data': '/var/lib/postgresql/{:s}/main'.format(version)
         },
         'gis': False,
     },
     'RedHat': {
         'pkgs': ['postgresql93-server', 'postgresql93-contrib'],
-        'service': 'postgresql-{}'.format(version),
+        'service': 'postgresql-{:s}'.format(version),
         'version': version,
         'init_command': 'service postgresql-9.3 initdb',
         'dir': {
@@ -39,10 +38,10 @@
         'pkgs': [],
         'service': 'postgresql',
         'version': version,
-        'init_command': 'pg_createcluster {} main --start'.format(version),
+        'init_command': 'pg_createcluster {:s} main --start'.format(version),
         'dir': {
-          'config': '/etc/postgresql/{}/main'.format(version),
-          'data': '/var/lib/postgresql/{}/main'.format(version)
+          'config': '/etc/postgresql/{:s}/main'.format(version),
+          'data': '/var/lib/postgresql/{:s}/main'.format(version)
         },
         'archive': "off",
         'synchronous': False,
