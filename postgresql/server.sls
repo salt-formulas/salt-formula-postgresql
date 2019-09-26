@@ -65,16 +65,16 @@ postgresql_service:
   - require:
     - file: /root/.pgpass
 
-{%- for database_name, database in server.get('database', {}).iteritems() %}
+{%- for database_name, database in server.get('database', {}).items() %}
   {%- include "postgresql/_database.sls" %}
 
-  {%- for extension_name, extension in database.get('extension', {}).iteritems() %}
+  {%- for extension_name, extension in database.get('extension', {}).items() %}
     {%- if extension.enabled %}
     {%- if extension.get('pkgs', []) %}
 
 postgresql_{{ extension_name }}_extension_packages:
   pkg.installed:
-  - names: {{ pkgs }}
+  - names: {{ extension.get('pkgs', []) }}
 
     {%- endif %}
 
@@ -87,12 +87,12 @@ database_{{ database_name }}_{{ extension_name }}_extension_present:
   - onlyif: /bin/false
   {%- endif %}
   - require:
-    - postgres_database: postgresql_database_{{ database_name }}
+    - postgres_database: {{ database_name }}
 
     {%- else %}
 
 database_{{ database_name }}_{{ extension_name }}_extension_absent:
-  postgres_extension.present:
+  postgres_extension.absent:
   - name: {{ extension_name }}
   - maintenance_db: {{ database_name }}
   - user: postgres
@@ -100,7 +100,7 @@ database_{{ database_name }}_{{ extension_name }}_extension_absent:
   - onlyif: /bin/false
   {%- endif %}
   - require:
-    - postgres_database: postgresql_database_{{ database_name }}
+    - postgres_database: {{ database_name }}
 
     {%- endif %}
   {%- endfor %}

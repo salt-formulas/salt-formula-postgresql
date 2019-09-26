@@ -15,7 +15,7 @@ postgresql_user_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ user.
         - service: postgresql_service
     {%- endif %}
     {%- if admin is defined %}
-    {%- for k, p in admin.iteritems() %}
+    {%- for k, p in admin.items() %}
     - db_{{ k }}: {{ p }}
     {%- endfor %}
     - user: root
@@ -39,7 +39,7 @@ postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}:
         - postgres_user: postgresql_user_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ user.name }}
         {%- endfor %}
     {%- if admin is defined %}
-    {%- for k, p in admin.iteritems() %}
+    {%- for k, p in admin.items() %}
     - db_{{ k }}: {{ p }}
     {%- endfor %}
     - user: root
@@ -61,31 +61,12 @@ postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ m
         PGPASSWORD: {{ admin.get('password', '') }}
       {%- if not database.init.get('force', false) == true %}
       onchanges:
-        - postgres_database: postgresql_database_{{ svr_name|default('localhost') }}_{{ maintenance_db }}
+        - postgres_database: {{ svr_name|default('localhost') }}_{{ maintenance_db }}
       {%- endif %}
       require:
-        - postgres_database: postgresql_database_{{ svr_name|default('localhost') }}_{{ maintenance_db }}
+        - postgres_database: {{ svr_name|default('localhost') }}_{{ maintenance_db }}
 {%- endfor %}
 {%- endif %}
-
-{%- for name, extension in database.get('extension', {}).iteritems() %}
-postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ name }}:
-  {%- if extension.get('enabled', true) %}
-  postgres_extension.present:
-    - schema: {{ extension.get('schema', 'public') }}
-  {%- else %}
-  postgres_extension.absent:
-  {%- endif %}
-    - name: {{ name }}
-    - maintenance_db: {{ database_name }}
-    - user: root
-    {%- if admin is defined %}
-    {%- for k, p in admin.iteritems() %}
-    - db_{{ k }}: {{ p }}
-    {%- endfor %}
-    - user: root
-    {%- endif %}
-{%- endfor %}
 
 {%- if database.initial_data is defined %}
 
@@ -100,7 +81,7 @@ postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}_{{ n
       database_name: {{ database_name }}
     - require:
         - file: postgresql_dirs
-        - postgres_database: postgresql_database_{{ svr_name|default('localhost') }}_{{ database_name }}
+        - postgres_database: {{ svr_name|default('localhost') }}_{{ database_name }}
 
 restore_postgresql_database_{{ database_name }}:
   cmd.run:
