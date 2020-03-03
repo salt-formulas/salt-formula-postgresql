@@ -20,6 +20,7 @@
           'data': '/var/lib/postgresql/{:s}/main'.format(version)
         },
         'gis': False,
+        'locale': 'en_US.UTF-8',
     },
     'RedHat': {
         'pkgs': ['postgresql93-server', 'postgresql93-contrib'],
@@ -30,6 +31,7 @@
           'config': '/var/lib/pgsql/9.3/data'
         },
         'gis': False,
+        'locale': 'en_US.UTF-8',
     },
 }, merge=salt['pillar.get']('postgresql:server')) %}
 
