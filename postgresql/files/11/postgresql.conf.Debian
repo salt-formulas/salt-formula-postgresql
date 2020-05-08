@@ -98,10 +98,16 @@ unix_socket_directories = '/var/run/postgresql'	# comma-separated list of direct
 # - SSL -
 
 ssl = on
-#ssl_ca_file = ''
-ssl_cert_file = '/etc/ssl/certs/ssl-cert-snakeoil.pem'
+{% if server.ssl_ca_file is defined -%}
+ssl_ca_file = '{{ server.ssl_ca_file }}'
+{% endif -%}
+{% if server.ssl_cert_file is defined -%}
+ssl_cert_file = '{{ server.ssl_cert_file }}'
+{% endif -%}
+{% if server.ssl_key_file is defined -%}
+ssl_key_file = '{{ server.ssl_key_file }}'
+{% endif -%}
 #ssl_crl_file = ''
-ssl_key_file = '/etc/ssl/private/ssl-cert-snakeoil.key'
 #ssl_ciphers = 'HIGH:MEDIUM:+3DES:!aNULL' # allowed SSL ciphers
 #ssl_prefer_server_ciphers = on
 #ssl_ecdh_curve = 'prime256v1'

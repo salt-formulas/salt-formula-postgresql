@@ -84,9 +84,15 @@ ssl = true                              # (change requires restart)
 #ssl_prefer_server_ciphers = on         # (change requires restart)
 #ssl_ecdh_curve = 'prime256v1'          # (change requires restart)
 #ssl_renegotiation_limit = 0            # amount of data between renegotiations
-ssl_cert_file = '/etc/ssl/certs/ssl-cert-snakeoil.pem'          # (change requires restart)
-ssl_key_file = '/etc/ssl/private/ssl-cert-snakeoil.key'         # (change requires restart)
-#ssl_ca_file = ''                       # (change requires restart)
+{% if server.ssl_ca_file is defined -%}
+ssl_ca_file = '{{ server.ssl_ca_file }}'
+{% endif -%}
+{% if server.ssl_cert_file is defined -%}
+ssl_cert_file = '{{ server.ssl_cert_file }}'
+{% endif -%}
+{% if server.ssl_key_file is defined -%}
+ssl_key_file = '{{ server.ssl_key_file }}'
+{% endif -%}
 #ssl_crl_file = ''                      # (change requires restart)
 #password_encryption = on
 #db_user_namespace = off
