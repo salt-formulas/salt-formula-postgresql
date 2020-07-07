@@ -1,4 +1,5 @@
 {%- from "postgresql/map.jinja" import server with context -%}
+{%- set settings = server.get('settings', {}) -%}
 # -----------------------------
 # PostgreSQL configuration file
 # -----------------------------
@@ -561,3 +562,7 @@ default_text_search_config = 'pg_catalog.english'
 #------------------------------------------------------------------------------
 
 #custom_variable_classes = ''		# list of custom variable class names
+
+{%- for k, v in settings.items() %}
+{{ k }} = {{ v }}
+{%- endfor %}
